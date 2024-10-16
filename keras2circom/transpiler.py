@@ -96,7 +96,11 @@ def transpile_AveragePooling2D(layer: Layer) -> typing.List[Component]:
     if layer.config['strides'][0] != layer.config['strides'][1]:
         raise NotImplementedError('Only strides[0] == strides[1] is supported')
     
-    return [Component(layer.name, templates['AveragePooling2D'], [Signal('in', layer.input), Signal('out', layer.output), Signal('remainder', layer.output)],[],{
+    return [Component(layer.name, templates['AveragePooling2D'], 
+        [Signal('in', layer.input), 
+        Signal('out', layer.output), 
+        # Signal('remainder', layer.output)
+        ],[],{
         'nRows': layer.input[0],
         'nCols': layer.input[1],
         'nChannels': layer.input[2],
@@ -128,12 +132,12 @@ def transpile_BatchNormalization2D(layer: Layer, dec: int) -> typing.List[Compon
         Signal('a', a.shape, a),
         Signal('b', b.shape, b),
         Signal('out', layer.output),
-        Signal('remainder', layer.output),
+        # Signal('remainder', layer.output),
         ],[],{
         'nRows': layer.input[0],
         'nCols': layer.input[1],
         'nChannels': layer.input[2],
-        'n': '10**'+dec,
+        'n': dec,
         })]
 
 def transpile_Conv2D(layer: Layer, dec: int) -> typing.List[Component]:
@@ -162,7 +166,7 @@ def transpile_Conv2D(layer: Layer, dec: int) -> typing.List[Component]:
         Signal('weights', layer.weights[0].shape, layer.weights[0]),
         Signal('bias', layer.weights[1].shape, layer.weights[1]),
         Signal('out', layer.output),
-        Signal('remainder', layer.output),
+        # Signal('remainder', layer.output),
         ],[],{
         'nRows': layer.input[0],
         'nCols': layer.input[1],
@@ -170,7 +174,7 @@ def transpile_Conv2D(layer: Layer, dec: int) -> typing.List[Component]:
         'nFilters': layer.config['filters'],
         'kernelSize': layer.config['kernel_size'][0],
         'strides': layer.config['strides'][0],
-        'n': '10**'+dec,
+        'n': dec,
         })
     
     if layer.config['activation'] == 'relu':
@@ -192,11 +196,11 @@ def transpile_Dense(layer: Layer, dec: int, last: bool = False) -> typing.List[C
         Signal('weights', layer.weights[0].shape, layer.weights[0]),
         Signal('bias', layer.weights[1].shape, layer.weights[1]),
         Signal('out', layer.output),
-        Signal('remainder', layer.output),
+        # Signal('remainder', layer.output),
         ],[],{
         'nInputs': layer.input[0],
         'nOutputs': layer.output[0],
-        'n': '10**'+dec,
+        'n': dec,
         })
     
     if layer.config['activation'] == 'relu':
@@ -231,7 +235,7 @@ def transpile_GlobalAveragePooling2D(layer: Layer) -> typing.List[Component]:
     return [Component(layer.name, templates['GlobalAveragePooling2D'], [
         Signal('in', layer.input),
         Signal('out', layer.output),
-        Signal('remainder', layer.output),
+        # Signal('remainder', layer.output),
         ],[],{
         'nRows': layer.input[0],
         'nCols': layer.input[1],
