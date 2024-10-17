@@ -132,11 +132,13 @@ class Signal:
     def inject_main(self, comp_name: str, prev_comp_name: str = None, prev_signal: Signal = None) -> str:
         '''inject signal into main'''
         inject_str = ''
+        if self.name == 'out':
+            return inject_str
         if self.value is not None or self.name == 'out' or self.name == 'remainder':
-            # if comp_name.endswith('softmax') and self.name == 'out':
-            #     inject_str += '{}.out <== {}_out[0];\n'.format(
-            #                 comp_name, comp_name)
-            #     return inject_str
+            if comp_name.endswith('softmax') and self.name == 'out':
+                inject_str += '{}.out <== {}_out[0];\n'.format(
+                            comp_name, comp_name)
+                return inject_str
             for i in range(len(self.shape)):
                 inject_str += '{}for (var i{} = 0; i{} < {}; i{}++) {{\n'.format(
                             ' '*i*4, i, i, self.shape[i], i)
