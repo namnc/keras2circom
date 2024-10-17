@@ -124,7 +124,7 @@ class Signal:
 
     def inject_signal(self, comp_name: str) -> str:
         '''inject signal into the beginning of the circuit'''
-        if self.value is not None or self.name == 'out' or self.name == 'remainder':
+        if self.value is not None and self.name != 'out' or self.name == 'remainder':
             return 'signal input {}_{}{};\n'.format(
                     comp_name, self.name, parse_shape(self.shape))
         return ''
@@ -133,10 +133,10 @@ class Signal:
         '''inject signal into main'''
         inject_str = ''
         if self.value is not None or self.name == 'out' or self.name == 'remainder':
-            if comp_name.endswith('softmax') and self.name == 'out':
-                inject_str += '{}.out <== {}_out[0];\n'.format(
-                            comp_name, comp_name)
-                return inject_str
+            # if comp_name.endswith('softmax') and self.name == 'out':
+            #     inject_str += '{}.out <== {}_out[0];\n'.format(
+            #                 comp_name, comp_name)
+            #     return inject_str
             for i in range(len(self.shape)):
                 inject_str += '{}for (var i{} = 0; i{} < {}; i{}++) {{\n'.format(
                             ' '*i*4, i, i, self.shape[i], i)
