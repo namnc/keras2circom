@@ -237,7 +237,7 @@ class Component:
 
     def inject_include(self) -> str:
         '''include the component template'''
-        return 'include "../circuits/{}";\n'.format(self.template.fpath)
+        return 'include "../circuits/{}";\n'.format(self.template.fpath.split('/')[-1])
     
     def inject_signal(self, prev_comp: Component = None, last_comp: bool = False) -> str:
         '''inject the component signals'''
